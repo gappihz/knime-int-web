@@ -6,22 +6,18 @@
     <title>Interactive KNIME Training Plan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: "Warm Neutral Harmony" -->
-    <!-- Application Structure Plan: The application is structured as a single-page, tab-based interface. A prominent navigation bar on the left (transforming to a top dropdown on mobile) lists all 8 exercises. This design was chosen for its high usability and intuitive flow. Users can quickly jump between exercises without scrolling through a long document. Each tab reveals a well-organized view of a single exercise, with clear headings for the scenario, objectives, nodes, and step-by-step logic. This thematic, task-oriented structure is superior to a linear report as it allows for non-linear exploration and quick reference, which is ideal for a training or enablement session. -->
-    <!-- Visualization & Content Choices: The primary goal is clarity and instruction. Report Info: Each of the 8 exercises. -> Goal: Organize and present instructional content clearly. -> Presentation Method: A tabbed layout with structured HTML/CSS text blocks. -> Interaction: Users click tabs to switch between exercises. The active tab is highlighted. This provides immediate access to any exercise. -> Justification: This interaction model is universally understood and highly efficient for accessing distinct sections of content. It avoids cognitive overload from a long scroll. -> Library/Method: Vanilla JavaScript for tab switching logic and Tailwind CSS for layout and styling. No charts are needed, so Chart.js/Plotly are not used. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #FDFBF8; /* Warm Neutral Main Background */
+            background-color: #FDFBF8;
             color: #4A4A4A;
         }
         .nav-item {
             transition: all 0.2s ease-in-out;
         }
         .nav-item.active {
-            background-color: #EAE3D9; /* Complimentary Color for Active State */
-            color: #A2886A; /* Subtle Accent Color */
+            background-color: #EAE3D9;
+            color: #A2886A;
             border-left: 4px solid #A2886A;
         }
         .nav-item:hover:not(.active) {
@@ -66,26 +62,21 @@
 <body class="antialiased">
 
     <div class="min-h-screen lg:flex">
-        <!-- Sidebar Navigation (for large screens) -->
         <aside class="hidden lg:block lg:w-1/4 xl:w-1/5 bg-[#F5F1EB] p-6 border-r border-[#EAE3D9]">
             <h1 class="text-xl font-bold text-[#A2886A] mb-2">KNIME Training Plan</h1>
             <p class="text-sm text-gray-600 mb-6"><strong>Prepared by 🤓: <a href="https://www.linkedin.com/in/hertzgappi/" target="_blank" rel="noopener noreferrer" class="text-[#A2886A] hover:underline">Hertz Gappi</a></p>
             </strong>
               <nav id="desktop-nav" class="space-y-2">
-                <!-- Navigation items will be injected here by JS -->
             </nav>
         </aside>
 
-        <!-- Main Content -->
         <main class="w-full lg:w-3/4 xl:w-4/5 p-6 sm:p-8 md:p-12">
             
-            <!-- Mobile Navigation (Dropdown) -->
             <div class="lg:hidden mb-6">
                 <h1 class="text-2xl font-bold text-[#A2886A] mb-2 text-center">KNIME Training Plan</h1>
                 <p class="text-sm text-gray-600 mb-4 text-center">Prepared by 🤓: <a href="https://www.linkedin.com/in/hertzgappi/" target="_blank" rel="noopener noreferrer" class="text-[#A2886A] hover:underline">Hertz Gappi</a></p>
                 <div class="relative">
                     <select id="mobile-nav" class="w-full p-3 border-2 mobile-nav rounded-lg appearance-none text-center font-semibold text-gray-700 focus:outline-none focus:border-[#A2886A]">
-                        <!-- Options will be injected here by JS -->
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -94,11 +85,8 @@
             </div>
 
             <div id="content-container">
-                <!-- Content sections will be injected here by JS -->
             </div>
 
-            <!-- Prepared By section (moved to main content footer for clarity, though original request implied sidebar) -->
-            <!-- Removing this as it's redundant with the header info now -->
         </main>
     </div>
 
@@ -323,9 +311,7 @@
         const mobileNav = document.getElementById('mobile-nav');
         const contentContainer = document.getElementById('content-container');
 
-        // Populate navigation and content
         exercises.forEach((ex, index) => {
-            // Desktop Nav Item
             const navLink = document.createElement('a');
             navLink.href = '#';
             navLink.dataset.target = ex.id;
@@ -333,14 +319,12 @@
             navLink.innerHTML = `<span class="mr-2">${ex.emoji}</span> ${ex.title}`;
             desktopNav.appendChild(navLink);
 
-            // Mobile Nav Option
             const navOption = document.createElement('option');
             navOption.value = ex.id;
             navOption.textContent = `${ex.emoji} ${ex.title}`;
             if (index === 0) navOption.selected = true;
             mobileNav.appendChild(navOption);
 
-            // Content Section
             const contentDiv = document.createElement('div');
             contentDiv.id = ex.id;
             contentDiv.className = `content-section prose-custom max-w-none ${index === 0 ? 'active' : ''}`;
@@ -373,15 +357,12 @@
         });
 
         function switchTab(targetId) {
-            // Update desktop nav
             document.querySelectorAll('#desktop-nav .nav-item').forEach(item => {
                 item.classList.toggle('active', item.dataset.target === targetId);
             });
 
-            // Update mobile nav
             mobileNav.value = targetId;
 
-            // Update content
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.toggle('active', section.id === targetId);
             });
