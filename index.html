@@ -183,7 +183,7 @@
             },
             {
                 id: 'ex4',
-                title: '4. Trade Signal Filtering',
+                title: '4. Trade Signal Filtering (HomeWork)',
                 emoji: '🚦',
                 scenario: `At "Quantum Quants," their automated trading system sometimes gets overzealous, opening new trades when one is already active on the same instrument. This violates their strict "one trade at a time" risk policy. Your challenge: build a KNIME workflow that acts as a trading traffic cop, filtering historical trade signals to ensure no overlapping open positions ever occurred. Only compliant trades get through!`,
                 objective: `To filter trade signals to ensure that no overlapping open trades exist, using a recursive loop to maintain a "current open trade" state.`,
@@ -291,7 +291,7 @@
             },
             {
                 id: 'ex8',
-                title: '8. Trade Sequence Blocking',
+                title: '8. Trade Sequence Blocking (HomeWork)',
                 emoji: '✅',
                 scenario: `At "Precision Trading," complete open-close trade cycles are paramount for accurate reporting and risk management. Their raw trade logs often contain orphaned "open" or "close" events, messing up their analytics. Your mission: build a KNIME workflow that rigorously audits these logs, identifying trade "block groups" and filtering out any incomplete cycles. Only perfectly matched open-close sequences should remain, ensuring data integrity.`,
                 objective: `To identify and filter complete trade open-close cycles within grouped trade events, ensuring data integrity for analysis.`,
