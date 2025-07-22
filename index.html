@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive KNIME Training Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: "Warm Neutral Harmony" -->
+    <!-- Application Structure Plan: The application is structured as a single-page, tab-based interface. A prominent navigation bar on the left (transforming to a top dropdown on mobile) lists all 8 exercises. This design was chosen for its high usability and intuitive flow. Users can quickly jump between exercises without scrolling through a long document. Each tab reveals a well-organized view of a single exercise, with clear headings for the scenario, objectives, nodes, and step-by-step logic. This thematic, task-oriented structure is superior to a linear report as it allows for non-linear exploration and quick reference, which is ideal for a training or enablement session. -->
+    <!-- Visualization & Content Choices: The primary goal is clarity and instruction. Report Info: Each of the 8 exercises. -> Goal: Organize and present instructional content clearly. -> Presentation Method: A tabbed layout with structured HTML/CSS text blocks. -> Interaction: Users click tabs to switch between exercises. The active tab is highlighted. This provides immediate access to any exercise. -> Justification: This interaction model is universally understood and highly efficient for accessing distinct sections of content. It avoids cognitive overload from a long scroll. -> Library/Method: Vanilla JavaScript for tab switching logic and Tailwind CSS for layout and styling. No charts are needed, so Chart.js/Plotly are not used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* Warm Neutral Main Background */
+            color: #4A4A4A;
+        }
+        .nav-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-item.active {
+            background-color: #EAE3D9; /* Complimentary Color for Active State */
+            color: #A2886A; /* Subtle Accent Color */
+            border-left: 4px solid #A2886A;
+        }
+        .nav-item:hover:not(.active) {
+            background-color: #F5F1EB;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .prose-custom h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #333;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid #EAE3D9;
+        }
+         .prose-custom ul, .prose-custom ol {
+            padding-left: 1.25rem;
+            margin-top: 0.5rem;
+        }
+        .prose-custom li {
+            margin-bottom: 0.5rem;
+        }
+        .prose-custom code {
+            background-color: #EAE3D9;
+            color: #A2886A;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .mobile-nav {
+            background-color: #FDFBF8;
+            border-color: #EAE3D9;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="min-h-screen lg:flex">
+        <!-- Sidebar Navigation (for large screens) -->
+        <aside class="hidden lg:block lg:w-1/4 xl:w-1/5 bg-[#F5F1EB] p-6 border-r border-[#EAE3D9]">
+            <h1 class="text-xl font-bold text-[#A2886A] mb-2">KNIME Training Plan</h1>
+            <p class="text-sm text-gray-600 mb-6"><strong>Prepared by 🤓: <a href="https://www.linkedin.com/in/hertzgappi/" target="_blank" rel="noopener noreferrer" class="text-[#A2886A] hover:underline">Hertz Gappi</a></p>
+            </strong>
+              <nav id="desktop-nav" class="space-y-2">
+                <!-- Navigation items will be injected here by JS -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full lg:w-3/4 xl:w-4/5 p-6 sm:p-8 md:p-12">
+            
+            <!-- Mobile Navigation (Dropdown) -->
+            <div class="lg:hidden mb-6">
+                <h1 class="text-2xl font-bold text-[#A2886A] mb-2 text-center">KNIME Training Plan</h1>
+                <p class="text-sm text-gray-600 mb-4 text-center">Prepared by 🤓: <a href="https://www.linkedin.com/in/hertzgappi/" target="_blank" rel="noopener noreferrer" class="text-[#A2886A] hover:underline">Hertz Gappi</a></p>
+                <div class="relative">
+                    <select id="mobile-nav" class="w-full p-3 border-2 mobile-nav rounded-lg appearance-none text-center font-semibold text-gray-700 focus:outline-none focus:border-[#A2886A]">
+                        <!-- Options will be injected here by JS -->
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-container">
+                <!-- Content sections will be injected here by JS -->
+            </div>
+
+            <!-- Prepared By section (moved to main content footer for clarity, though original request implied sidebar) -->
+            <!-- Removing this as it's redundant with the header info now -->
+        </main>
+    </div>
+
+    <script>
+        const exercises = [
+            {
+                id: 'ex1',
+                title: '1. Monthly Bank Reconciliation',
+                emoji: '🕵️‍♀️',
+                scenario: `As "BalanceGuard Solutions," your client's monthly bank reconciliation is a maze of manual checks. Missing payments and unexpected charges lurk in every file. Your mission: automate the search for these elusive discrepancies across all monthly statements. Build a KNIME workflow to sift bank and cashbook data, instantly highlighting unmatched transactions. No more manual maze navigation!`,
+                objective: 'To automate the monthly bank reconciliation process by dynamically reading and joining multiple files based on variable file paths and filtering criteria.',
+                nodes: [
+                    'File Handling & Iteration: <code>List Files</code>, <code>Table Row to Variable Loop Start</code>',
+                    'Data Reading: <code>Excel Reader</code> (configured with flow variables for file path)',
+                    'Data Transformation & Joining: <code>Joiner</code>, <code>Rule Engine</code> (for flagging unmatched), <code>Missing Value</code>',
+                    'Loop Control: <code>Loop End</code>',
+                    'Output: <code>Excel Writer</code> (optional, for unmatched transactions)'
+                ],
+                logic: [
+                    '<b>List Files:</b> Start by listing all bank statement and cashbook files within a specified directory. Filter for <code>.csv</code> or <code>.xlsx</code> files with a specific naming convention (e.g., <code>bank_*.csv</code>, <code>cashbook_*.csv</code>).',
+                    '<b>Table Row to Variable Loop Start:</b> Convert the list of file paths into flow variables, initiating a loop for each pair of bank and cashbook files.',
+                    '<b>Excel Reader (Bank):</b> Inside the loop, read the bank statement file using the current file path flow variable.',
+                    '<b>Excel Reader (Cashbook):</b> Read the corresponding cashbook file for the same month using a dynamically constructed file path.',
+                    '<b>Date Filtering (Rule Engine or Row Filter):</b> Before joining, use a Rule Engine or Row Filter with flow variables to ensure that only transactions pertinent to the current month being processed are included. This dynamic filter will use the month extracted from the file name.',
+                    '<b>Joiner:</b> Perform a full outer join on a common key (e.g., Transaction ID, Date, Amount, Vendor) to match transactions between the bank statement and cashbook.',
+                    '<b>Rule Engine (Flag Unmatched):</b> After the join, use a Rule Engine to flag transactions that are present in one dataset but not the other (e.g., <code>NOT isMissing($Bank Transaction ID$) AND isMissing($Cashbook Transaction ID$) => "Unmatched in Cashbook"</code>).',
+                    '<b>Loop End:</b> Collect the results of each iteration, creating a consolidated table of reconciled and unmatched transactions.',
+                    '<b>Missing Value:</b> Use a Missing Value node to clean up any missing values created by the outer join.',
+                    '<b>Excel Writer (Optional):</b> Optionally, write the unmatched transactions to a new Excel file for further investigation.'
+                ]
+            },
+            {
+                id: 'ex2',
+                title: '2. Dynamic Journal Entry',
+                emoji: '💸',
+                scenario: `"Apex Accounting" needs to get a handle on its growing bad debt problem. Manual journal entries for overdue Accounts Receivable are slow and error-prone. Your goal: design a KNIME workflow that automatically generates the correct debit and credit entries for AR aging categories (30, 60, 90+ days). Become the dynamic dynamo that cleans up the balance sheet!`,
+                objective: 'To automate the creation of journal entries based on AR aging categories using loops and dynamic data generation.',
+                nodes: [
+                    'Data Aggregation: <code>GroupBy</code>',
+                    'Loop Control: <code>Table Row to Variable Loop Start</code>, <code>Loop End</code>',
+                    'Conditional Logic & Data Generation: <code>Rule Engine</code>, <code>Table Creator</code>',
+                    'Data Manipulation: <code>Column Renamer</code>, <code>Constant Value Column</code>',
+                    'Output: <code>Excel Writer</code>'
+                ],
+                logic: [
+                    '<b>GroupBy:</b> Group the AR data by Days Overdue (e.g., 0-30, 31-60, 61-90, 90+) and calculate the sum of Outstanding Amount for each group.',
+                    '<b>Table Row to Variable Loop Start:</b> Convert each aggregated row (representing an aging category) into flow variables, initiating a loop for each category.',
+                    '<b>Rule Engine (Determine Accounts):</b> Inside the loop, use a Rule Engine to dynamically determine the Debit and Credit accounts based on the current Days Overdue category (e.g., if Days Overdue is 90+, Debit: Bad Debt Expense, Credit: Allowance for Doubtful Accounts).',
+                    '<b>Table Creator:</b> Create two rows for each journal entry (one debit, one credit) within the loop. Use flow variables to populate the Account, Amount (from the grouped outstanding amount), and Description fields.',
+                    '<b>Column Renamer & Constant Value Column:</b> Ensure consistent column names for the journal entries (e.g., "Account", "Debit", "Credit", "Description", "Date"). Add a constant value column for the "Date" of the journal entry.',
+                    '<b>Loop End:</b> Concatenate all generated journal entries from each iteration into a single table.',
+                    '<b>Excel Writer:</b> Write the consolidated journal entries to an Excel file.'
+                ]
+            },
+            {
+                id: 'ex3',
+                title: '3. Asset Depreciation Forecast',
+                emoji: '⏳',
+                scenario: `You're the asset manager for "Prime Logistics." Forecasting depreciation for each of their hundreds of assets, each with a different useful life, is a budgeting nightmare. You need a workflow that calculates monthly depreciation for every asset until its exact end-of-life, then stops. No more over-depreciating or under-depreciating!`,
+                objective: `To simulate and calculate asset depreciation over its useful life using a recursive loop, dynamically stopping the calculation when the asset's useful life is complete.`,
+                nodes: [
+                    'Loop Control: <code>Table Row to Variable Loop Start</code>',
+                    '<code>Recursive Loop Start</code>',
+                    '<code>Variable Condition Loop End</code>',
+                    'Date & Time Manipulation: <code>Date&Time Difference</code>',
+                    '<code>Date&Time Shift</code>',
+                    'Calculation: <code>Java Snippet</code> (or <code>Math Formula</code> for simpler methods)',
+                    '<code>Column Expressions</code>',
+                    'Data Aggregation: <code>Concatenate</code>',
+                    'Variable Manipulation: <code>Variable Expressions</code>'
+                ],
+                logic: [
+                    '<b>Table Row to Variable Loop Start:</b> Iterate through each asset, passing its details (Cost, Useful Life, Start Date, Depreciation Method) as flow variables to the recursive loop.',
+                    '<b>Recursive Loop Start:</b> Initialize the loop. The initial iteration will take the asset\'s starting data. Subsequent iterations will take the output of the previous iteration.',
+                    '<b>Date&Time Shift:</b> Inside the loop, increment the current month by one using <code>Date&Time Shift</code> to simulate time progression.',
+                    '<b>Date&Time Difference:</b> Calculate the difference in months between the asset\'s start date and the current month in the loop.',
+                    '<b>Java Snippet (or Math Formula):</b> Calculate the monthly depreciation based on the selected depreciation method (e.g., Straight-Line: Cost / Useful Life).',
+                    '<b>Variable Condition Loop End:</b> This is crucial. Use a <code>Variable Condition Loop End</code> node to check if the current month has exceeded the asset\'s "Useful Life (Months)". The loop terminates for that specific asset when the condition is met.',
+                    '<b>Concatenate:</b> Collect the monthly depreciation records for each asset from the recursive loop.',
+                    '<b>Loop End (Outer Loop):</b> Combine the results from all assets.'
+                ]
+            },
+            {
+                id: 'ex4',
+                title: '4. Trade Signal Filtering',
+                emoji: '🚦',
+                scenario: `At "Quantum Quants," their automated trading system sometimes gets overzealous, opening new trades when one is already active on the same instrument. This violates their strict "one trade at a time" risk policy. Your challenge: build a KNIME workflow that acts as a trading traffic cop, filtering historical trade signals to ensure no overlapping open positions ever occurred. Only compliant trades get through!`,
+                objective: `To filter trade signals to ensure that no overlapping open trades exist, using a recursive loop to maintain a "current open trade" state.`,
+                nodes: [
+                    'Loop Control: <code>Table Row to Variable Loop Start</code>',
+                    '<code>Recursive Loop Start</code>',
+                    '<code>Recursive Loop End</code>',
+                    'Conditional Logic: <code>Rule Engine</code>',
+                    '<code>Java Snippet</code> (for complex state management)',
+                    'Data Manipulation: <code>Lag Column</code>',
+                    '<code>Column Appender</code>',
+                    '<code>Row Filter</code>',
+                    'Variable Manipulation: <code>Variable Expressions</code>'
+                ],
+                logic: [
+                    '<b>Sorter:</b> Sort the trade data by Open Date and then Close Date to ensure chronological processing.',
+                    '<b>Table Row to Variable Loop Start (Outer Loop):</b> If processing multiple instruments, use an outer loop to process each instrument\'s trades independently.',
+                    '<b>Recursive Loop Start:</b> Initialize the recursive loop. The output of one iteration (e.g., the last open trade details) will feed into the next.',
+                    '<b>Rule Engine/Java Snippet (Trade Logic):</b> Inside the loop, for each new trade signal: Check if there\'s an Open Trade currently active. If a new Open signal arrives and an Open Trade is active and not yet closed, mark the new Open signal as invalid. If a Close signal arrives for the currently active Open Trade, update the state to "no active trade." Use <code>Java Snippet</code> for more complex state management.',
+                    '<b>Lag Column:</b> Use a <code>Lag Column</code> to get the Close Date of the previous trade, which helps in identifying overlaps.',
+                    '<b>Row Filter:</b> After processing, filter out the invalid trade signals.',
+                    '<b>Recursive Loop End:</b> Pass the updated state (e.g., whether a trade is currently open) to the next iteration.',
+                    '<b>Loop End (Outer Loop):</b> Collect the valid trade sequences.'
+                ]
+            },
+            {
+                id: 'ex5',
+                title: '5. Financial Report Consolidation',
+                emoji: '🤝',
+                scenario: `"Converge Corp." struggles with inconsistent departmental financial reports. Each month, scattered Excel files land on your desk, needing manual consolidation. Your quest: build a KNIME workflow to loop through all these varied departmental files, transform their chaotic structures into a unified format, and consolidate them into one pristine master report. Become the unifying force in financial reporting!`,
+                objective: `To consolidate multiple departmental Excel financial reports into a single, unified report, handling varying report structures and dynamically extracting data.`,
+                nodes: [
+                    'File Handling & Iteration: <code>List Files</code>',
+                    '<code>Table Row to Variable Loop Start</code>',
+                    'Data Reading: <code>Excel Reader</code> (configured with flow variables)',
+                    'Data Transformation: <code>Pivoting</code>',
+                    '<code>Column Filter</code>',
+                    '<code>Column Renamer</code>',
+                    '<code>Constant Value Column</code>',
+                    'Data Aggregation: <code>Concatenate</code>',
+                    '<code>GroupBy</code>',
+                    'Output: <code>Excel Writer</code>'
+                ],
+                logic: [
+                    '<b>List Files:</b> Get a list of all departmental Excel files in the designated directory.',
+                    '<b>Table Row to Variable Loop Start:</b> Iterate through each file path, converting it into a flow variable.',
+                    '<b>Excel Reader:</b> Inside the loop, read the current Excel file using the flow variable for the file path.',
+                    '<b>Extract Month and Department:</b> Use <code>Rule Engine</code> or <code>String Manipulation</code> to extract the Department and Month from the file name and add them as new columns.',
+                    '<b>Pivoting:</b> If reports have accounts as columns and months as rows, use the <code>Pivoting</code> node to transform them into a standardized format (e.g., Department, Month, Account, Amount).',
+                    '<b>Column Filter:</b> Select only the necessary columns to ensure consistency across all reports.',
+                    '<b>Concatenate:</b> Collect the transformed data from each departmental report into a single table.',
+                    '<b>Loop End:</b> Finish the loop.',
+                    '<b>GroupBy:</b> After the loop, group the consolidated data by Department, Month, and Account to sum the Amounts.',
+                    '<b>Excel Writer:</b> Write the final consolidated report to an Excel file.'
+                ]
+            },
+            {
+                id: 'ex6',
+                title: '6. FX Rate Application',
+                emoji: '🌍',
+                scenario: `At "GlobalReach Inc.," transactions pour in from around the world, each in its local currency. Before anyone can make sense of the financials, every amount must be converted to USD using dynamic, daily FX rates. Your challenge: build a KNIME workflow that acts as a global converter, intelligently fetching and applying the correct exchange rate for each currency, transforming chaos into clarity.`,
+                objective: `To convert transaction amounts to a base currency (USD) by dynamically applying foreign exchange rates based on the transaction currency.`,
+                nodes: [
+                    'Data Aggregation: <code>GroupBy</code>',
+                    'Loop Control: <code>Table Row to Variable Loop Start</code>',
+                    '<code>Loop End</code>',
+                    'Conditional Logic: <code>Rule Engine</code>',
+                    'Data Transformation: <code>Math Formula</code>',
+                    '<code>Column Expressions</code>',
+                    'Variable Manipulation: <code>Variable Expressions</code>',
+                    '<code>Table Creator</code> (to simulate FX lookup)'
+                ],
+                logic: [
+                    '<b>GroupBy:</b> Group the transaction data by Currency to process each currency type separately.',
+                    '<b>Table Row to Variable Loop Start:</b> Iterate through each unique currency, making the Currency code available as a flow variable.',
+                    '<b>Simulate FX Rate Lookup:</b> Use a <code>Table Creator</code> or <code>CSV Reader</code> to simulate an FX rate lookup table.',
+                    '<b>Rule Engine / Column Expressions (Get FX Rate):</b> Extract the relevant FX rate for the current Currency from the lookup table. Assign it to a flow variable.',
+                    '<b>Math Formula:</b> Apply the FX rate to convert the Amount to USD Amount using the formula: <code>USD Amount = Amount / FX Rate</code>. The FX Rate will be passed as a flow variable.',
+                    '<b>Loop End:</b> Concatenate the results of each currency\'s conversion into a single table.'
+                ]
+            },
+            {
+                id: 'ex7',
+                title: '7. Sliding Forecast Window',
+                emoji: '📈',
+                scenario: `You're a financial analyst at "TrendSetters Co.," tasked with providing monthly rolling 12-month revenue forecasts. Manually calculating these for every single month is a drain on your time. Your solution: build a KNIME workflow that creates a "sliding window" of 12 months across your historical revenue data. It should automatically calculate key metrics for each window as it moves forward. Become the master of dynamic time-series analysis!`,
+                objective: `To perform a rolling 12-month revenue analysis by dynamically filtering data within a sliding window and calculating metrics for each window.`,
+                nodes: [
+                    'Date & Time Management: <code>Create Date&Time Range</code>',
+                    '<code>Interval Loop Start</code>',
+                    '<code>Date&Time-based Row Filter</code>',
+                    '<code>Date&Time Shift</code>',
+                    'Data Aggregation: <code>GroupBy</code>',
+                    'Calculation: <code>Math Formula</code>',
+                    'Loop Control: <code>Loop End</code>'
+                ],
+                logic: [
+                    '<b>Create Date&Time Range:</b> Generate a sequence of months covering the entire dataset\'s period, one for each starting point of a 12-month window.',
+                    '<b>Interval Loop Start:</b> Use the generated date range to initiate an <code>Interval Loop Start</code>. This node iterates through the date range, providing flow variables for the current window\'s start and end dates.',
+                    '<b>Date&Time-based Row Filter:</b> Inside the loop, filter the revenue data to include only records falling within the current 12-month window defined by the flow variables.',
+                    '<b>GroupBy:</b> Group the filtered data by Customer Segment or Product (or simply calculate overall revenue) and sum the Revenue for the current window.',
+                    '<b>Math Formula:</b> Calculate any additional metrics required for the window (e.g., average revenue per month).',
+                    '<b>Loop End:</b> Collect the calculated metrics for each 12-month window.'
+                ]
+            },
+            {
+                id: 'ex8',
+                title: '8. Trade Sequence Blocking',
+                emoji: '✅',
+                scenario: `At "Precision Trading," complete open-close trade cycles are paramount for accurate reporting and risk management. Their raw trade logs often contain orphaned "open" or "close" events, messing up their analytics. Your mission: build a KNIME workflow that rigorously audits these logs, identifying trade "block groups" and filtering out any incomplete cycles. Only perfectly matched open-close sequences should remain, ensuring data integrity.`,
+                objective: `To identify and filter complete trade open-close cycles within grouped trade events, ensuring data integrity for analysis.`,
+                nodes: [
+                    'Data Preparation: <code>Sorter</code>',
+                    '<code>Lag Column</code>',
+                    '<code>Constant Value Column</code>',
+                    'Loop Control: <code>Group Loop Start</code>',
+                    '<code>Loop End</code>',
+                    'Conditional Logic: <code>Rule Engine</code>',
+                    '<code>Java Snippet</code>',
+                    'Filtering: <code>Row Filter</code>',
+                    'Data Joining: <code>Joiner</code>'
+                ],
+                logic: [
+                    '<b>Sorter:</b> Sort the data by Trade Pair ID and then by Timestamp to ensure events for each trade pair are in chronological order.',
+                    '<b>Lag Column:</b> Create a <code>Lag Column</code> for Event Type and Timestamp to compare the current row with the previous row within the same Trade Pair ID group.',
+                    '<b>Group Loop Start:</b> Group the data by Trade Pair ID, initiating a loop for each unique trade pair.',
+                    '<b>Rule Engine (Identify Sequence Start/End):</b> Inside the loop, use <code>Rule Engine</code> to identify the start (first event is Open) and end (last event is Close) of a potential complete trade cycle.',
+                    '<b>Java Snippet (State Management/Flagging):</b> Use a <code>Java Snippet</code> to maintain a state for each trade pair, flagging if an Open event has occurred without a corresponding Close, or vice versa. If the counter is 0 at the end of the group, it\'s a complete cycle.',
+                    '<b>Row Filter:</b> After the state management, filter out any trade pairs that do not have a complete open-close cycle.',
+                    '<b>Loop End:</b> Collect the complete trade cycles from each group.',
+                    '<b>Joiner (Optional):</b> If needed, join the filtered complete cycles back to the original full dataset for further analysis.'
+                ]
+            },
+        ];
+
+        const desktopNav = document.getElementById('desktop-nav');
+        const mobileNav = document.getElementById('mobile-nav');
+        const contentContainer = document.getElementById('content-container');
+
+        // Populate navigation and content
+        exercises.forEach((ex, index) => {
+            // Desktop Nav Item
+            const navLink = document.createElement('a');
+            navLink.href = '#';
+            navLink.dataset.target = ex.id;
+            navLink.className = `nav-item block p-3 rounded-lg font-semibold text-gray-700 ${index === 0 ? 'active' : ''}`;
+            navLink.innerHTML = `<span class="mr-2">${ex.emoji}</span> ${ex.title}`;
+            desktopNav.appendChild(navLink);
+
+            // Mobile Nav Option
+            const navOption = document.createElement('option');
+            navOption.value = ex.id;
+            navOption.textContent = `${ex.emoji} ${ex.title}`;
+            if (index === 0) navOption.selected = true;
+            mobileNav.appendChild(navOption);
+
+            // Content Section
+            const contentDiv = document.createElement('div');
+            contentDiv.id = ex.id;
+            contentDiv.className = `content-section prose-custom max-w-none ${index === 0 ? 'active' : ''}`;
+            
+            const nodesList = ex.nodes.map(node => `<li>${node}</li>`).join('');
+            const logicList = ex.logic.map(step => `<li>${step}</li>`).join('');
+
+            contentDiv.innerHTML = `
+                <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">${ex.emoji} ${ex.title}</h2>
+                    <p class="text-gray-600 mb-6">${ex.scenario}</p>
+                    
+                    <div class="bg-[#F5F1EB] p-4 rounded-lg mb-6">
+                        <h3 class="!mt-0 !border-none text-[#A2886A]">🎯 Technical Objective</h3>
+                        <p class="text-gray-700">${ex.objective}</p>
+                    </div>
+
+                    <h3>🛠️ KNIME Nodes to Use</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        ${nodesList}
+                    </ul>
+
+                    <h3>📝 Step-by-Step Logic</h3>
+                    <ol class="list-decimal list-inside text-gray-700 space-y-2">
+                        ${logicList}
+                    </ol>
+                </div>
+            `;
+            contentContainer.appendChild(contentDiv);
+        });
+
+        function switchTab(targetId) {
+            // Update desktop nav
+            document.querySelectorAll('#desktop-nav .nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.target === targetId);
+            });
+
+            // Update mobile nav
+            mobileNav.value = targetId;
+
+            // Update content
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.toggle('active', section.id === targetId);
+            });
+            window.scrollTo(0, 0);
+        }
+
+        desktopNav.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = e.target.closest('.nav-item');
+            if (target) {
+                switchTab(target.dataset.target);
+            }
+        });
+
+        mobileNav.addEventListener('change', (e) => {
+            switchTab(e.target.value);
+        });
+
+    </script>
+</body>
+</html>
