@@ -99,12 +99,15 @@
                 scenario: `As "BalanceGuard Solutions," your client's monthly bank reconciliation is a maze of manual checks. Missing payments and unexpected charges lurk in every file. Your mission: automate the search for these elusive discrepancies across all monthly statements. Build a KNIME workflow to sift bank and cashbook data, instantly highlighting unmatched transactions. No more manual maze navigation!`,
                 objective: 'To automate the monthly bank reconciliation process by dynamically reading and joining multiple files based on variable file paths and filtering criteria.',
                 nodes: [
-                    'File Handling & Iteration: <code>List Files</code>, <code>Table Row to Variable Loop Start</code>',
-                    'Data Reading: <code>Excel Reader</code> (configured with flow variables for file path)',
-                    'Data Transformation & Joining: <code>Joiner</code>, <code>Rule Engine</code> (for flagging unmatched), <code>Missing Value</code>',
-                    'Loop Control: <code>Loop End</code>',
-                    'Output: <code>Excel Writer</code> (optional, for unmatched transactions)'
-                ],
+                            'File Handling & Iteration: <code>List Files</code>, <code>Path to String</code>, <code>Table Row to Variable Loop Start</code>',
+                            'Data Reading: <code>CSV Reader</code> (configured with flow variables for file path)',
+                            'Data Cleaning: <code>String Manipulation</code>, <code>GroupBy</code>',
+                            'Data Transformation & Joining: <code>Joiner</code>',
+                            'Computation and Checks: <code>Row Filter</code>, <code>Math Formula</code>',
+                            'Date Tagging: <code>Date&Time Part Extractor</code>, <code>String to Date&Time</code>',
+                            'Loop Control: <code>Loop End</code>',
+                            'Output: <code>Excel Writer</code> (optional, for unmatched transactions)'
+                        ],
                 logic: [
                     '<b>List Files:</b> Start by listing all bank statement and cashbook files within a specified directory. Filter for <code>.csv</code> or <code>.xlsx</code> files with a specific naming convention (e.g., <code>bank_*.csv</code>, <code>cashbook_*.csv</code>).',
                     '<b>Table Row to Variable Loop Start:</b> Convert the list of file paths into flow variables, initiating a loop for each pair of bank and cashbook files.',
