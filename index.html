@@ -180,7 +180,7 @@
                 scenario: `At "Quantum Quants," their automated trading system sometimes gets overzealous, opening new trades when one is already active on the same instrument. This violates their strict "one trade at a time" risk policy. Your challenge: build a KNIME workflow that acts as a trading traffic cop, filtering historical trade signals to ensure no overlapping open positions ever occurred. Only compliant trades get through!`,
                 objective: `To filter trade signals to ensure that no overlapping open trades exist, using a recursive loop to maintain a "current open trade" state.`,
                 nodes: [
-                    'Loop Control: <code>Table Row to Variable Loop Start</code>',
+                    <!-- 'Loop Control: <code>Table Row to Variable Loop Start</code>',
                     '<code>Recursive Loop Start</code>',
                     '<code>Recursive Loop End</code>',
                     'Conditional Logic: <code>Rule Engine</code>',
@@ -188,7 +188,8 @@
                     'Data Manipulation: <code>Lag Column</code>',
                     '<code>Column Appender</code>',
                     '<code>Row Filter</code>',
-                    'Variable Manipulation: <code>Variable Expressions</code>'
+                    'Variable Manipulation: <code>Variable Expressions</code>' -->
+                    'Revealed on August 4 😉 '
                 ],
                 logic: [
                     '<b>Sorter:</b> Sort the trade data by Open Date and then Close Date to ensure chronological processing.',
