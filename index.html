@@ -96,7 +96,7 @@
                 id: 'ex1',
                 title: '1. Monthly Bank Reconciliation',
                 emoji: '🕵️‍♀️',
-                scenario: `As "BalanceGuard Solutions," your client's monthly bank reconciliation is a maze of manual checks. Missing payments and unexpected charges lurk in every file. Your mission: automate the search for these elusive discrepancies across all monthly statements. Build a KNIME workflow to sift bank and cashbook data, instantly highlighting unmatched transactions. No more manual maze navigation!`,
+                scenario: `As "BalanceGuard Solutions," your client is struggling with misstated cashbooks—some transactions may be overstated, others understated, and no one’s quite sure which. Thankfully, you have a reliable single source of truth: the bank statements. Your mission is to automate the reconciliation process across multiple months. Build a KNIME workflow that compares bank statements against cashbooks, instantly flagging unmatched transactions and potential discrepancies. Say goodbye to manual guesswork—let your workflow lead the way to clarity.`,
                 objective: 'To automate the monthly bank reconciliation process by dynamically reading and joining multiple files based on variable file paths and filtering criteria.',
                 nodes: [
                             'File Handling & Iteration: <code>List Files</code>, <code>Path to String</code>, <code>Table Row to Variable Loop Start</code>',
@@ -109,16 +109,17 @@
                             'Output: <code>Excel Writer</code> (optional, for unmatched transactions)'
                         ],
                 logic: [
-                    '<b>List Files:</b> Start by listing all bank statement and cashbook files within a specified directory. Filter for <code>.csv</code> or <code>.xlsx</code> files with a specific naming convention (e.g., <code>bank_*.csv</code>, <code>cashbook_*.csv</code>).',
-                    '<b>Table Row to Variable Loop Start:</b> Convert the list of file paths into flow variables, initiating a loop for each pair of bank and cashbook files.',
-                    '<b>Excel Reader (Bank):</b> Inside the loop, read the bank statement file using the current file path flow variable.',
-                    '<b>Excel Reader (Cashbook):</b> Read the corresponding cashbook file for the same month using a dynamically constructed file path.',
-                    '<b>Date Filtering (Rule Engine or Row Filter):</b> Before joining, use a Rule Engine or Row Filter with flow variables to ensure that only transactions pertinent to the current month being processed are included. This dynamic filter will use the month extracted from the file name.',
-                    '<b>Joiner:</b> Perform a full outer join on a common key (e.g., Transaction ID, Date, Amount, Vendor) to match transactions between the bank statement and cashbook.',
-                    '<b>Rule Engine (Flag Unmatched):</b> After the join, use a Rule Engine to flag transactions that are present in one dataset but not the other (e.g., <code>NOT isMissing($Bank Transaction ID$) AND isMissing($Cashbook Transaction ID$) => "Unmatched in Cashbook"</code>).',
-                    '<b>Loop End:</b> Collect the results of each iteration, creating a consolidated table of reconciled and unmatched transactions.',
-                    '<b>Missing Value:</b> Use a Missing Value node to clean up any missing values created by the outer join.',
-                    '<b>Excel Writer (Optional):</b> Optionally, write the unmatched transactions to a new Excel file for further investigation.'
+                        '<b>List Files & Separate:</b> Use <code>List Files/Folders</code> to gather all input files, then convert paths to string. Use <code>Row Splitter</code> with wildcards (e.g., <code>*bank*</code>, <code>*cashbook*</code>) to separate bank and cashbook files.',
+                        '<b>Table Row to Variable Loop Start:</b> Loop through each file using <code>Table Row to Variable Loop Start</code>. Inside the loop, use <code>CSV Reader</code> to read files. Set delimiter to <code>;</code> for bank and <code>||</code> for cashbook.',
+                        '<b>Clean Bank Value Column:</b> Use <code>String Manipulation</code> to remove currency symbols in <code>ValuE</code> using: <code>replaceChars($ValuE$, "$", "")</code>. Then convert it to numeric using <code>String to Number</code>.',
+                        '<b>Normalize Transaction ID:</b> Use <code>String Manipulation</code> to keep only numeric parts of IDs for matching. Bank: <code>regexReplace($Transaction Identifier$, "[^0-9]", "")</code>. Cashbook: <code>regexReplace($Trans_ID$, "[^0-9]", "")</code>.',
+                        '<b>Group Transactions:</b> Use <code>GroupBy</code> to consolidate duplicate or split entries. Group by all string fields, and sum relevant numeric columns via manual aggregation.',
+                        '<b>Joiner:</b> Use <code>Joiner</code> to match transactions based on numeric ID. Enable matching and left-unmatched rows. Keep all cashbook columns and only <code>ValuE</code> from bank.',
+                        '<b>Math Formula:</b> Create a discrepancy check using <code>$ValuE$ - $Amount Local$</code> to identify misstatements.',
+                        '<b>Convert & Extract Date Parts:</b> Use <code>String to Date&Time</code> to convert <code>TransactionDate</code>. Then use <code>Date&Time Part Extractor</code> to extract <code>Month</code> and <code>Year</code>.',
+                        '<b>Monthly Adjustment Summary:</b> Use <code>GroupBy</code> to summarize total discrepancies per month. Group by <code>Month</code> and <code>Year</code>, and aggregate the difference using <code>Sum</code>.',
+                        '<b>Filter Misstated Transactions:</b> Use <code>Row Filter</code> to isolate transactions where the discrepancy is not equal to zero.',
+                        '<b>Excel Writer (Optional):</b> Export both summary and mismatch reports using <code>Excel Writer</code>. Use flow variables if needed to consolidate into one file.'
                 ]
             },
             {
