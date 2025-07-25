@@ -99,14 +99,14 @@
                 scenario: `As "BalanceGuard Solutions," your client is struggling with misstated cashbooks—some transactions may be overstated, others understated, and no one’s quite sure which. Thankfully, you have a reliable single source of truth: the bank statements. Your mission is to automate the reconciliation process across multiple months. Build a KNIME workflow that compares bank statements against cashbooks, instantly flagging unmatched transactions and potential discrepancies. Say goodbye to manual guesswork—let your workflow lead the way to clarity.`,
                 objective: 'To automate the monthly bank reconciliation process by dynamically reading and joining multiple files based on variable file paths and filtering criteria.',
                 nodes: [
-                            'File Handling & Iteration: <code>List Files</code>, <code>Path to String</code>, <code>Table Row to Variable Loop Start</code>',
-                            'Data Reading: <code>CSV Reader</code> (configured with flow variables for file path)',
-                            'Data Cleaning: <code>String Manipulation</code>, <code>GroupBy</code>',
-                            'Data Transformation & Joining: <code>Joiner</code>',
-                            'Computation and Checks: <code>Row Filter</code>, <code>Math Formula</code>',
-                            'Date Tagging: <code>Date&Time Part Extractor</code>, <code>String to Date&Time</code>',
+                            'File Handling & Iteration: <code>List Files/Folders</code>, <code>Path to String</code>, <code>Row Splitter</code>, <code>Table Row to Variable Loop Start</code>',
+                            'Data Reading: <code>CSV Reader</code> (configured with flow variables and custom delimiters: <code>;</code> for bank, <code>||</code> for cashbook)',
+                            'Data Cleaning: <code>String Manipulation</code>, <code>String to Number</code>, <code>Missing Value</code>',
+                            'Data Transformation & Joining: <code>GroupBy</code>, <code>Joiner</code>',
+                            'Computation and Checks: <code>Math Formula</code>, <code>Rule Engine</code>, <code>Row Filter</code>',
+                            'Date Tagging: <code>String to Date&Time</code>, <code>Date&Time Part Extractor</code>',
                             'Loop Control: <code>Loop End</code>',
-                            'Output: <code>Excel Writer</code> (optional, for unmatched transactions)'
+                            'Output: <code>Excel Writer</code> (optional, for summary and unmatched transactions)'
                         ],
                 logic: [
                         '<b>List Files & Separate:</b> Use <code>List Files/Folders</code> to gather all input files, then convert paths to string. Use <code>Row Splitter</code> with wildcards (e.g., <code>*bank*</code>, <code>*cashbook*</code>) to separate bank and cashbook files.',
