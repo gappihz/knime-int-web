@@ -45,6 +45,7 @@
         .prose-custom li {
             margin-bottom: 0.5rem;
         }
+        /* Adjusted code style to ensure bolding works inside */
         .prose-custom code {
             background-color: #EAE3D9;
             color: #A2886A;
@@ -52,6 +53,13 @@
             border-radius: 0.25rem;
             font-size: 0.875rem;
             font-weight: 500;
+            display: inline-block; /* Helps with padding and margin inside list items */
+            white-space: nowrap; /* Prevents wrapping within code blocks */
+        }
+        /* Specific style for bold elements within code blocks */
+        .prose-custom code.highlight {
+            font-weight: bold;
+            color: #7B5F4A; /* Slightly different color to emphasize, optional */
         }
         .mobile-nav {
             background-color: #FDFBF8;
@@ -144,19 +152,19 @@
                     '<code>Excel Writer</code> (Optional, for output)'
                 ],
                 logic: [
-                    '<b>Load Data using `CSV Reader`:</b> Drag the <code>CSV Reader</code> node. Configure it to read your source CSV file with the **delimiter** set to **`--`** (double dash).',
-                    '<b>Convert Invoice Date to Date&Time Format using `String to Date&Time`:</b> Connect the <code>CSV Reader</code>. Select your "Invoice Date Text" column, set the correct **Date Format** (e.g., "yyyy-MM-dd"), and set the **New Type** to <code>Date and Time</code>.',
-                    '<b>Calculate Due Date using `Date&Time Shift`:</b> Connect after <code>String to Date&Time</code>. Select the "Invoice Date Text" column, set **Shift Type** to <code>Days</code>, **Shift Value** to <code>30</code>, and append a new column named "Due Date".',
-                    '<b>Create Today\'s Date using `Create Date&Time Range`:</b> Drag this node separately. Set **Mode Selection** to <code>Fixed One</code>, check <code>Use execution date for starting point</code> and <code>Use execution date for ending point</code>.',
-                    '<b>Combine Data and Today\'s Date using `Cross Joiner`:</b> Connect the output of <code>Date&Time Shift</code> to the upper input and the output of <code>Create Date&Time Range</code> to the lower input. Use default configuration.',
-                    '<b>Calculate Days Outstanding using `Date&Time Difference`:</b> Connect after <code>Cross Joiner</code>. Set **Base Column** to "Today", **Calculate difference to** "Due Date", **Granularity** to <code>Days</code>, and name the new column "Days Outstanding". **Important:** In this setup, negative values mean "overdue".',
-                    '<b>Create Aging Buckets using `Rule Engine`:</b> Connect after <code>Date&Time Difference</code>. Use the following rules based on "Days Outstanding" to create categories:',
+                    '<b>Load Data using <code>CSV Reader</code>:</b> Drag the <code>CSV Reader</code> node. Configure it to read your source CSV file with the <b>delimiter</b> set to <code class="highlight">--</code> (double dash).',
+                    '<b>Convert Invoice Date to Date&Time Format using <code>String to Date&Time</code>:</b> Connect the <code>CSV Reader</code>. Select your "Invoice Date Text" column, set the correct <b>Date Format</b> (e.g., "yyyy-MM-dd"), and set the <b>New Type</b> to <code>Date and Time</code>.',
+                    '<b>Calculate Due Date using <code>Date&Time Shift</code>:</b> Connect after <code>String to Date&Time</code>. Select the "Invoice Date Text" column, set <b>Shift Type</b> to <code>Days</code>, <b>Shift Value</b> to <code>30</code>, and append a new column named "Due Date".',
+                    '<b>Create Today\'s Date using <code>Create Date&Time Range</code>:</b> Drag this node separately. Set <b>Mode Selection</b> to <code>Fixed One</code>, check <code>Use execution date for starting point</code> and <code>Use execution date for ending point</code>.',
+                    '<b>Combine Data and Today\'s Date using <code>Cross Joiner</code>:</b> Connect the output of <code>Date&Time Shift</code> to the upper input and the output of <code>Create Date&Time Range</code> to the lower input. Use default configuration.',
+                    '<b>Calculate Days Outstanding using <code>Date&Time Difference</code>:</b> Connect after <code>Cross Joiner</code>. Set <b>Base Column</b> to "Today", <b>Calculate difference to</b> "Due Date", <b>Granularity</b> to <code>Days</code>, and name the new column "Days Outstanding". <b>Important:</b> In this setup, negative values mean "overdue".',
+                    '<b>Create Aging Buckets using <code>Rule Engine</code>:</b> Connect after <code>Date&Time Difference</code>. Use the following rules based on "Days Outstanding" to create categories:',
                     '<ul><li><code>$Days Outstanding$ < -90 => "90+"</code></li><li><code>$Days Outstanding$ < -60 AND $Days Outstanding$ >= -90 => "61-90"</code></li><li><code>$Days Outstanding$ < -30 AND $Days Outstanding$ >= -60 => "31-60"</code></li><li><code>$Days Outstanding$ < 0 AND $Days Outstanding$ >= -30 => "0-30"</code></li><li><code>TRUE => "NOT YET DUE"</code></li></ul>',
-                    '<b>Aggregate Amounts by Aging Bucket using `Pivot`:</b> Connect after <code>Rule Engine</code>. Set "Client Name" (and "Invoice Number" if desired) as **Groups**, the Rule Engine output column (e.g., "Prediction") as **Pivots**. For **Manual Aggregation**, select "Amount Due" and set **Aggregation Method** to <code>Sum</code>. In Advanced Settings, set "Column name remains" to <code>Pivot name (aggregation name)</code>.',
-                    '<b>Rearrange Columns using `Column Resorter`:</b> Connect after <code>Pivot</code>. Order columns as: Client Name, 0-30, 31-60, 61-90, 90+, NOT YET DUE.',
-                    '<b>Handle Missing Values using `Missing Value`:</b> Connect after <code>Column Resorter</code>. For all numeric (aging bucket) columns, set **Default Method (Numbers)** to <code>Fixed value</code> and the value to <code>0</code>.',
-                    '<b>Filter Clients with No Outstanding Balances using `Rule-based Row Filter`:</b> Connect after <code>Missing Value</code>. Add the rule: <code>$"0-30"$ == 0 AND $"31-60"$ == 0 AND $"61-90"$ == 0 AND $"90+"$ == 0 => FALSE<br>TRUE => TRUE</code>. This excludes rows where all outstanding buckets are zero.',
-                    '<b>Export Results using `Excel Writer` (Optional):</b> Connect the final output to this node to save your AR Aging Report to an Excel file.'
+                    '<b>Aggregate Amounts by Aging Bucket using <code>Pivot</code>:</b> Connect after <code>Rule Engine</code>. Set "Client Name" (and "Invoice Number" if desired) as <b>Groups</b>, the Rule Engine output column (e.g., "Prediction") as <b>Pivots</b>. For <b>Manual Aggregation</b>, select "Amount Due" and set <b>Aggregation Method</b> to <code>Sum</code>. In Advanced Settings, set "Column name remains" to <code>Pivot name (aggregation name)</code>.',
+                    '<b>Rearrange Columns using <code>Column Resorter</code>:</b> Connect after <code>Pivot</code>. Order columns as: Client Name, 0-30, 31-60, 61-90, 90+, NOT YET DUE.',
+                    '<b>Handle Missing Values using <code>Missing Value</code>:</b> Connect after <code>Column Resorter</code>. For all numeric (aging bucket) columns, set <b>Default Method (Numbers)</b> to <code>Fixed value</code> and the value to <code>0</code>.',
+                    '<b>Filter Clients with No Outstanding Balances using <code>Rule-based Row Filter</code>:</b> Connect after <code>Missing Value</code>. Add the rule: <code>$"0-30"$ == 0 AND $"31-60"$ == 0 AND $"61-90"$ == 0 AND $"90+"$ == 0 => FALSE<br>TRUE => TRUE</code>. This excludes rows where all outstanding buckets are zero.',
+                    '<b>Export Results using <code>Excel Writer</code> (Optional):</b> Connect the final output to this node to save your AR Aging Report to an Excel file.'
                 ]
             },
             {
