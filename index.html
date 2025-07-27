@@ -330,4 +330,16 @@
 
         desktopNav.addEventListener('click', (e) => {
             e.preventDefault();
-            const target = e.target.closest('.nav-
+            const target = e.target.closest('.nav-item');
+            if (target) {
+                switchTab(target.dataset.target);
+            }
+        });
+
+        mobileNav.addEventListener('change', (e) => {
+            switchTab(e.target.value);
+        });
+
+    </script>
+</body>
+</html>
