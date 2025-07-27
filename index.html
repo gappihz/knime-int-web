@@ -77,6 +77,10 @@
             background-color: #FDFBF8;
             border-color: #EAE3D9;
         }
+        .coming-soon-text {
+            color: red;
+            font-weight: bold; /* Optional: make it bold to stand out more */
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -91,7 +95,7 @@
         </aside>
 
         <main class="w-full lg:w-3/4 xl:w-4/5 p-6 sm:p-8 md:p-12">
-            
+
             <div class="lg:hidden mb-6">
                 <h1 class="text-2xl font-bold text-[#A2886A] mb-2 text-center">KNIME Training Plan</h1>
                 <p class="text-sm text-gray-600 mb-4 text-center">Prepared by 🤓: <a href="https://www.linkedin.com/in/hertzgappi/" target="_blank" rel="noopener noreferrer" class="text-[#A2886A] hover:underline">Hertz Gappi</a></p>
@@ -244,10 +248,10 @@
             navLink.href = '#';
             navLink.dataset.target = ex.id;
             navLink.className = `nav-item block p-3 rounded-lg font-semibold text-gray-700 ${index === 0 ? 'active' : ''}`;
-            
+
             // Display "Coming Soon" in the navigation for exercises 4-8
             if (ex.comingSoonDate) {
-                navLink.innerHTML = `<span class="mr-2">${ex.emoji}</span> ${ex.title}: Coming Soon ${ex.comingSoonDate}`;
+                navLink.innerHTML = `<span class="mr-2">${ex.emoji}</span> ${ex.title}: <span class="coming-soon-text">Coming Soon ${ex.comingSoonDate}</span>`;
             } else {
                 navLink.innerHTML = `<span class="mr-2">${ex.emoji}</span> ${ex.title}`;
             }
@@ -267,13 +271,13 @@
             const contentDiv = document.createElement('div');
             contentDiv.id = ex.id;
             contentDiv.className = `content-section prose-custom max-w-none ${index === 0 ? 'active' : ''}`;
-            
+
             // Conditional rendering for "Coming Soon" exercises
             if (ex.comingSoonDate) {
                 contentDiv.innerHTML = `
                     <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100 text-center">
                         <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">${ex.emoji} ${ex.title}</h2>
-                        <p class="text-xl text-gray-600 mb-4"><strong>Coming Soon ${ex.comingSoonDate}!</strong></p>
+                        <p class="text-xl text-gray-600 mb-4"><strong class="coming-soon-text">Coming Soon ${ex.comingSoonDate}!</strong></p>
                         <p class="text-gray-500">Stay tuned for this exciting new exercise.</p>
                     </div>
                 `;
@@ -294,7 +298,7 @@
                     <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
                         <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">${ex.emoji} ${ex.title}</h2>
                         <p class="text-gray-600 mb-6">${ex.scenario}</p>
-                        
+
                         <div class="bg-[#F5F1EB] p-4 rounded-lg mb-6">
                             <h3 class="!mt-0 !border-none text-[#A2886A]">🎯 Technical Objective</h3>
                             <p class="text-gray-700">${ex.objective}</p>
