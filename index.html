@@ -107,28 +107,28 @@
                 scenario: `As "BalanceGuard Solutions," your client is struggling with misstated cashbooks—some transactions may be overstated, others understated, and no one’s quite sure which. Thankfully, you have a reliable single source of truth: the bank statements. Your mission is to automate the reconciliation process across multiple months. Build a KNIME workflow that compares bank statements against cashbooks, instantly flagging unmatched transactions and potential discrepancies. Say goodbye to manual guesswork—let your workflow lead the way to clarity.`,
                 objective: 'To automate the monthly bank reconciliation process by dynamically reading and joining multiple files based on variable file paths and filtering criteria.',
                 nodes: [
-                                'File Handling & Iteration: <code>List Files/Folders</code>, <code>Path to String</code>, <code>Row Splitter</code>, <code>Table Row to Variable Loop Start</code>',
-                                'Data Reading: <code>CSV Reader</code> (configured with flow variables and custom delimiters: <code>;</code> for bank, <code>||</code> for cashbook)',
-                                'Data Cleaning: <code>String Manipulation</code>, <code>String to Number</code>, <code>Missing Value</code>',
-                                'Data Transformation & Joining: <code>GroupBy</code>, <code>Joiner</code>',
-                                'Computation and Checks: <code>Math Formula</code>, <code>Rule Engine</code>, <code>Row Filter</code>',
-                                'Date Tagging: <code>String to Date&Time</code>, <code>Date&Time Part Extractor</code>',
-                                'Loop Control: <code>Loop End</code>',
-                                'Output: <code>Excel Writer</code> (optional, for summary and unmatched transactions)'
-                            ],
+                    '<b>File Handling & Iteration:</b> <code>List Files/Folders</code>, <code>Path to String</code>, <code>Row Splitter</code>, <code>Table Row to Variable Loop Start</code>',
+                    '<b>Data Reading:</b> <code>CSV Reader</code> (configured with flow variables and custom delimiters: <code>;</code> for bank, <code>||</code> for cashbook)',
+                    '<b>Data Cleaning:</b> <code>String Manipulation</code>, <code>String to Number</code>, <code>Missing Value</code>',
+                    '<b>Data Transformation & Joining:</b> <code>GroupBy</code>, <code>Joiner</code>',
+                    '<b>Computation and Checks:</b> <code>Math Formula</code>, <code>Rule Engine</code>, <code>Row Filter</code>',
+                    '<b>Date Tagging:</b> <code>String to Date&Time</code>, <code>Date&Time Part Extractor</code>',
+                    '<b>Loop Control:</b> <code>Loop End</code>',
+                    '<b>Output:</b> <code>Excel Writer</code> (optional, for summary and unmatched transactions)'
+                ],
                 logic: [
-                                '<b>List Files & Separate:</b> Use <code>List Files/Folders</code> to gather all input files, then convert paths to string. Use <code>Row Splitter</code> with wildcards (e.g., <code>*bank*</code>, <code>*cashbook*</code>) to separate bank and cashbook files.',
-                                '<b>Table Row to Variable Loop Start:</b> Loop through each file using <code>Table Row to Variable Loop Start</code>. Inside the loop, use <code>CSV Reader</code> to read files. Set delimiter to <code>;</code> for bank and <code>||</code> for cashbook.',
-                                '<b>Clean Bank Value Column:</b> Use <code>String Manipulation</code> to remove currency symbols in <code>ValuE</code> using: <code>replaceChars($ValuE$, "$", "")</code>. Then convert it to numeric using <code>String to Number</code>.',
-                                '<b>Normalize Transaction ID:</b> Use <code>String Manipulation</code> to keep only numeric parts of IDs for matching. Bank: <code>regexReplace($Transaction Identifier$, "[^0-9]", "")</code>. Cashbook: <code>regexReplace($Trans_ID$, "[^0-9]", "")</code>.',
-                                '<b>Group Transactions:</b> Use <code>GroupBy</code> to consolidate duplicate or split entries. Group by all string fields, and sum relevant numeric columns via manual aggregation.',
-                                '<b>Joiner:</b> Use <code>Joiner</code> to match transactions based on numeric ID. Enable matching and left-unmatched rows. Keep all cashbook columns and only <code>ValuE</code> from bank.',
-                                '<b>Math Formula:</b> Create a discrepancy check using <code>$ValuE$ - $Amount Local$</code> to identify misstatements.',
-                                '<b>Convert & Extract Date Parts:</b> Use <code>String to Date&Time</code> to convert <code>TransactionDate</code>. Then use <code>Date&Time Part Extractor</code> to extract <code>Month</code> and <code>Year</code>.',
-                                '<b>Monthly Adjustment Summary:</b> Use <code>GroupBy</code> to summarize total discrepancies per month. Group by <code>Month</code> and <code>Year</code>, and aggregate the difference using <code>Sum</code>.',
-                                '<b>Filter Misstated Transactions:</b> Use <code>Row Filter</code> to isolate transactions where the discrepancy is not equal to zero.',
-                                '<b>Excel Writer (Optional):</b> Export both summary and mismatch reports using <code>Excel Writer</code>. Use flow variables if needed to consolidate into one file.'
-                            ]
+                    '<b>List Files & Separate:</b> Use <code>List Files/Folders</code> to gather all input files, then convert paths to string. Use <code>Row Splitter</code> with wildcards (e.g., <code>*bank*</code>, <code>*cashbook*</code>) to separate bank and cashbook files.',
+                    '<b>Table Row to Variable Loop Start:</b> Loop through each file using <code>Table Row to Variable Loop Start</code>. Inside the loop, use <code>CSV Reader</code> to read files. Set delimiter to <code>;</code> for bank and <code>||</code> for cashbook.',
+                    '<b>Clean Bank Value Column:</b> Use <code>String Manipulation</code> to remove currency symbols in <code>ValuE</code> using: <code>replaceChars($ValuE$, "$", "")</code>. Then convert it to numeric using <code>String to Number</code>.',
+                    '<b>Normalize Transaction ID:</b> Use <code>String Manipulation</code> to keep only numeric parts of IDs for matching. Bank: <code>regexReplace($Transaction Identifier$, "[^0-9]", "")</code>. Cashbook: <code>regexReplace($Trans_ID$, "[^0-9]", "")</code>.',
+                    '<b>Group Transactions:</b> Use <code>GroupBy</code> to consolidate duplicate or split entries. Group by all string fields, and sum relevant numeric columns via manual aggregation.',
+                    '<b>Joiner:</b> Use <code>Joiner</code> to match transactions based on numeric ID. Enable matching and left-unmatched rows. Keep all cashbook columns and only <code>ValuE</code> from bank.',
+                    '<b>Math Formula:</b> Create a discrepancy check using <code>$ValuE$ - $Amount Local$</code> to identify misstatements.',
+                    '<b>Convert & Extract Date Parts:</b> Use <code>String to Date&Time</code> to convert <code>TransactionDate</code>. Then use <code>Date&Time Part Extractor</code> to extract <code>Month</code> and <code>Year</code>.',
+                    '<b>Monthly Adjustment Summary:</b> Use <code>GroupBy</code> to summarize total discrepancies per month. Group by <code>Month</code> and <code>Year</code>, and aggregate the difference using <code>Sum</code>.',
+                    '<b>Filter Misstated Transactions:</b> Use <code>Row Filter</code> to isolate transactions where the discrepancy is not equal to zero.',
+                    '<b>Excel Writer (Optional):</b> Export both summary and mismatch reports using <code>Excel Writer</code>. Use flow variables if needed to consolidate into one file.'
+                ]
             },
             {
                 id: 'ex2',
@@ -137,19 +137,13 @@
                 scenario: `As "Apex Accounting," you need to get a handle on your growing bad debt problem. Manual journal entries for overdue Accounts Receivable are slow and error-prone. Your goal: design a KNIME workflow that automatically generates an AR aging report, categorizing outstanding balances into aging buckets (0-30, 31-60, 61-90, 90+, Not Yet Due) based on "Days Outstanding." Become the dynamic dynamo that cleans up the balance sheet!`,
                 objective: 'To automate the creation of an AR aging report by calculating "Days Outstanding" and categorizing balances into aging buckets, filtering to show only clients with outstanding amounts.',
                 nodes: [
-                    '<code>CSV Reader</code>',
-                    '<code>String to Date&Time</code>',
-                    '<code>Date&Time Shift</code>',
-                    '<code>Create Date&Time Range</code>',
-                    '<code>Cross Joiner</code>',
-                    '<code>Date&Time Difference</code>',
-                    '<code>Rule Engine</code>',
-                    '<code>Pivot</code>',
-                    '<code>Column Filter</code>',
-                    '<code>Column Resorter</code>',
-                    '<code>Missing Value</code>',
-                    '<code>Rule-based Row Filter</code>',
-                    '<code>Excel Writer</code> (Optional, for output)'
+                    '<b>Data Input:</b> <code>CSV Reader</code>',
+                    '<b>Date & Time Manipulation:</b> <code>String to Date&Time</code>, <code>Date&Time Shift</code>, <code>Create Date&Time Range</code>, <code>Date&Time Difference</code>',
+                    '<b>Data Joining:</b> <code>Cross Joiner</code>',
+                    '<b>Data Transformation:</b> <code>Rule Engine</code>, <code>Pivot</code>, <code>Column Filter</code>, <code>Column Resorter</code>',
+                    '<b>Data Cleaning:</b> <code>Missing Value</code>',
+                    '<b>Data Filtering:</b> <code>Rule-based Row Filter</code>',
+                    '<b>Output:</b> <code>Excel Writer</code> (Optional, for summary and unmatched transactions)'
                 ],
                 logic: [
                     '<b>Load Data using <code>CSV Reader</code>:</b> Drag the <code>CSV Reader</code> node. Configure it to read your source CSV file with the <b>delimiter</b> set to <code class="highlight">--</code> (double dash).',
@@ -174,15 +168,11 @@
                 scenario: `You're the asset manager for "Prime Logistics." Forecasting depreciation for each of their hundreds of assets, each with a different useful life, is a budgeting nightmare. You need a workflow that calculates monthly depreciation for every asset until its exact end-of-life, then stops. No more over-depreciating or under-depreciating!`,
                 objective: `To simulate and calculate asset depreciation over its useful life using a recursive loop, dynamically stopping the calculation when the asset's useful life is complete.`,
                 nodes: [
-                    'Loop Control: <code>Table Row to Variable Loop Start</code>',
-                    '<code>Recursive Loop Start</code>',
-                    '<code>Variable Condition Loop End</code>',
-                    'Date & Time Manipulation: <code>Date&Time Difference</code>',
-                    '<code>Date&Time Shift</code>',
-                    'Calculation: <code>Java Snippet</code> (or <code>Math Formula</code> for simpler methods)',
-                    '<code>Column Expressions</code>',
-                    'Data Aggregation: <code>Concatenate</code>',
-                    'Variable Manipulation: <code>Variable Expressions</code>'
+                    '<b>Loop Control:</b> <code>Table Row to Variable Loop Start</code>, <code>Recursive Loop Start</code>, <code>Variable Condition Loop End</code>, <code>Loop End</code>',
+                    '<b>Date & Time Manipulation:</b> <code>Date&Time Difference</code>, <code>Date&Time Shift</code>',
+                    '<b>Calculation:</b> <code>Java Snippet</code> (or <code>Math Formula</code> for simpler methods), <code>Column Expressions</code>',
+                    '<b>Data Aggregation:</b> <code>Concatenate</code>',
+                    '<b>Variable Manipulation:</b> <code>Variable Expressions</code>'
                 ],
                 logic: [
                     '<b>Table Row to Variable Loop Start:</b> Iterate through each asset, passing its details (Cost, Useful Life, Start Date, Depreciation Method) as flow variables to the recursive loop.',
@@ -270,7 +260,15 @@
                     </div>
                 `;
             } else {
-                const nodesList = ex.nodes.map(node => `<li>${node}</li>`).join('');
+                // Modified to handle structured nodes array
+                let nodesHtml = '';
+                ex.nodes.forEach(category => {
+                    const parts = category.split(':');
+                    const categoryName = parts[0];
+                    const nodesList = parts[1].split(',').map(node => `<code>${node.trim()}</code>`).join(', ');
+                    nodesHtml += `<li><b>${categoryName}:</b> ${nodesList}</li>`;
+                });
+
                 const logicList = ex.logic.map(step => `<li>${step}</li>`).join('');
 
                 contentDiv.innerHTML = `
@@ -285,7 +283,7 @@
 
                         <h3>🛠️ KNIME Nodes to Use</h3>
                         <ul class="list-disc list-inside text-gray-700 space-y-1">
-                            ${nodesList}
+                            ${nodesHtml}
                         </ul>
 
                         <h3>📝 Step-by-Step Logic</h3>
