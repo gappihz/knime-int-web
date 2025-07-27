@@ -99,28 +99,28 @@
                 scenario: `As "BalanceGuard Solutions," your client is struggling with misstated cashbooks—some transactions may be overstated, others understated, and no one’s quite sure which. Thankfully, you have a reliable single source of truth: the bank statements. Your mission is to automate the reconciliation process across multiple months. Build a KNIME workflow that compares bank statements against cashbooks, instantly flagging unmatched transactions and potential discrepancies. Say goodbye to manual guesswork—let your workflow lead the way to clarity.`,
                 objective: 'To automate the monthly bank reconciliation process by dynamically reading and joining multiple files based on variable file paths and filtering criteria.',
                 nodes: [
-                            'File Handling & Iteration: <code>List Files/Folders</code>, <code>Path to String</code>, <code>Row Splitter</code>, <code>Table Row to Variable Loop Start</code>',
-                            'Data Reading: <code>CSV Reader</code> (configured with flow variables and custom delimiters: <code>;</code> for bank, <code>||</code> for cashbook)',
-                            'Data Cleaning: <code>String Manipulation</code>, <code>String to Number</code>, <code>Missing Value</code>',
-                            'Data Transformation & Joining: <code>GroupBy</code>, <code>Joiner</code>',
-                            'Computation and Checks: <code>Math Formula</code>, <code>Rule Engine</code>, <code>Row Filter</code>',
-                            'Date Tagging: <code>String to Date&Time</code>, <code>Date&Time Part Extractor</code>',
-                            'Loop Control: <code>Loop End</code>',
-                            'Output: <code>Excel Writer</code> (optional, for summary and unmatched transactions)'
-                        ],
+                                'File Handling & Iteration: <code>List Files/Folders</code>, <code>Path to String</code>, <code>Row Splitter</code>, <code>Table Row to Variable Loop Start</code>',
+                                'Data Reading: <code>CSV Reader</code> (configured with flow variables and custom delimiters: <code>;</code> for bank, <code>||</code> for cashbook)',
+                                'Data Cleaning: <code>String Manipulation</code>, <code>String to Number</code>, <code>Missing Value</code>',
+                                'Data Transformation & Joining: <code>GroupBy</code>, <code>Joiner</code>',
+                                'Computation and Checks: <code>Math Formula</code>, <code>Rule Engine</code>, <code>Row Filter</code>',
+                                'Date Tagging: <code>String to Date&Time</code>, <code>Date&Time Part Extractor</code>',
+                                'Loop Control: <code>Loop End</code>',
+                                'Output: <code>Excel Writer</code> (optional, for summary and unmatched transactions)'
+                            ],
                 logic: [
-                        '<b>List Files & Separate:</b> Use <code>List Files/Folders</code> to gather all input files, then convert paths to string. Use <code>Row Splitter</code> with wildcards (e.g., <code>*bank*</code>, <code>*cashbook*</code>) to separate bank and cashbook files.',
-                        '<b>Table Row to Variable Loop Start:</b> Loop through each file using <code>Table Row to Variable Loop Start</code>. Inside the loop, use <code>CSV Reader</code> to read files. Set delimiter to <code>;</code> for bank and <code>||</code> for cashbook.',
-                        '<b>Clean Bank Value Column:</b> Use <code>String Manipulation</code> to remove currency symbols in <code>ValuE</code> using: <code>replaceChars($ValuE$, "$", "")</code>. Then convert it to numeric using <code>String to Number</code>.',
-                        '<b>Normalize Transaction ID:</b> Use <code>String Manipulation</code> to keep only numeric parts of IDs for matching. Bank: <code>regexReplace($Transaction Identifier$, "[^0-9]", "")</code>. Cashbook: <code>regexReplace($Trans_ID$, "[^0-9]", "")</code>.',
-                        '<b>Group Transactions:</b> Use <code>GroupBy</code> to consolidate duplicate or split entries. Group by all string fields, and sum relevant numeric columns via manual aggregation.',
-                        '<b>Joiner:</b> Use <code>Joiner</code> to match transactions based on numeric ID. Enable matching and left-unmatched rows. Keep all cashbook columns and only <code>ValuE</code> from bank.',
-                        '<b>Math Formula:</b> Create a discrepancy check using <code>$ValuE$ - $Amount Local$</code> to identify misstatements.',
-                        '<b>Convert & Extract Date Parts:</b> Use <code>String to Date&Time</code> to convert <code>TransactionDate</code>. Then use <code>Date&Time Part Extractor</code> to extract <code>Month</code> and <code>Year</code>.',
-                        '<b>Monthly Adjustment Summary:</b> Use <code>GroupBy</code> to summarize total discrepancies per month. Group by <code>Month</code> and <code>Year</code>, and aggregate the difference using <code>Sum</code>.',
-                        '<b>Filter Misstated Transactions:</b> Use <code>Row Filter</code> to isolate transactions where the discrepancy is not equal to zero.',
-                        '<b>Excel Writer (Optional):</b> Export both summary and mismatch reports using <code>Excel Writer</code>. Use flow variables if needed to consolidate into one file.'
-                ]
+                                '<b>List Files & Separate:</b> Use <code>List Files/Folders</code> to gather all input files, then convert paths to string. Use <code>Row Splitter</code> with wildcards (e.g., <code>*bank*</code>, <code>*cashbook*</code>) to separate bank and cashbook files.',
+                                '<b>Table Row to Variable Loop Start:</b> Loop through each file using <code>Table Row to Variable Loop Start</code>. Inside the loop, use <code>CSV Reader</code> to read files. Set delimiter to <code>;</code> for bank and <code>||</code> for cashbook.',
+                                '<b>Clean Bank Value Column:</b> Use <code>String Manipulation</code> to remove currency symbols in <code>ValuE</code> using: <code>replaceChars($ValuE$, "$", "")</code>. Then convert it to numeric using <code>String to Number</code>.',
+                                '<b>Normalize Transaction ID:</b> Use <code>String Manipulation</code> to keep only numeric parts of IDs for matching. Bank: <code>regexReplace($Transaction Identifier$, "[^0-9]", "")</code>. Cashbook: <code>regexReplace($Trans_ID$, "[^0-9]", "")</code>.',
+                                '<b>Group Transactions:</b> Use <code>GroupBy</code> to consolidate duplicate or split entries. Group by all string fields, and sum relevant numeric columns via manual aggregation.',
+                                '<b>Joiner:</b> Use <code>Joiner</code> to match transactions based on numeric ID. Enable matching and left-unmatched rows. Keep all cashbook columns and only <code>ValuE</code> from bank.',
+                                '<b>Math Formula:</b> Create a discrepancy check using <code>$ValuE$ - $Amount Local$</code> to identify misstatements.',
+                                '<b>Convert & Extract Date Parts:</b> Use <code>String to Date&Time</code> to convert <code>TransactionDate</code>. Then use <code>Date&Time Part Extractor</code> to extract <code>Month</code> and <code>Year</code>.',
+                                '<b>Monthly Adjustment Summary:</b> Use <code>GroupBy</code> to summarize total discrepancies per month. Group by <code>Month</code> and <code>Year</code>, and aggregate the difference using <code>Sum</code>.',
+                                '<b>Filter Misstated Transactions:</b> Use <code>Row Filter</code> to isolate transactions where the discrepancy is not equal to zero.',
+                                '<b>Excel Writer (Optional):</b> Export both summary and mismatch reports using <code>Excel Writer</code>. Use flow variables if needed to consolidate into one file.'
+                            ]
             },
             {
                 id: 'ex2',
@@ -175,139 +175,33 @@
             },
             {
                 id: 'ex4',
-                title: '4. Trade Signal Filtering (HomeWork)',
+                title: '4. Trade Signal Filtering',
                 emoji: '🚦',
-                scenario: `At "Quantum Quants," their automated trading system sometimes gets overzealous, opening new trades when one is already active on the same instrument. This violates their strict "one trade at a time" risk policy. Your challenge: build a KNIME workflow that acts as a trading traffic cop, filtering historical trade signals to ensure no overlapping open positions ever occurred. Only compliant trades get through!`,
-                objective: `To filter trade signals to ensure that no overlapping open trades exist, using a recursive loop to maintain a "current open trade" state.`,
-                nodes: [
-                    'Loop Control: <code>Table Row to Variable Loop Start</code>',
-                    '<code>Recursive Loop Start</code>',
-                    '<code>Recursive Loop End</code>',
-                    'Conditional Logic: <code>Rule Engine</code>',
-                    '<code>Java Snippet</code> (for complex state management)',
-                    'Data Manipulation: <code>Lag Column</code>',
-                    '<code>Column Appender</code>',
-                    '<code>Row Filter</code>',
-                    'Variable Manipulation: <code>Variable Expressions</code>'
-                ],
-                logic: [
-                    '<b>Sorter:</b> Sort the trade data by Open Date and then Close Date to ensure chronological processing.',
-                    '<b>Table Row to Variable Loop Start (Outer Loop):</b> If processing multiple instruments, use an outer loop to process each instrument\'s trades independently.',
-                    '<b>Recursive Loop Start:</b> Initialize the recursive loop. The output of one iteration (e.g., the last open trade details) will feed into the next.',
-                    '<b>Rule Engine/Java Snippet (Trade Logic):</b> Inside the loop, for each new trade signal: Check if there\'s an Open Trade currently active. If a new Open signal arrives and an Open Trade is active and not yet closed, mark the new Open signal as invalid. If a Close signal arrives for the currently active Open Trade, update the state to "no active trade." Use <code>Java Snippet</code> for more complex state management.',
-                    '<b>Lag Column:</b> Use a <code>Lag Column</code> to get the Close Date of the previous trade, which helps in identifying overlaps.',
-                    '<b>Row Filter:</b> After processing, filter out the invalid trade signals.',
-                    '<b>Recursive Loop End:</b> Pass the updated state (e.g., whether a trade is currently open) to the next iteration.',
-                    '<b>Loop End (Outer Loop):</b> Collect the valid trade sequences.'
-                ]
+                comingSoonDate: 'August 1'
             },
             {
                 id: 'ex5',
                 title: '5. Financial Report Consolidation',
                 emoji: '🤝',
-                scenario: `"Converge Corp." struggles with inconsistent departmental financial reports. Each month, scattered Excel files land on your desk, needing manual consolidation. Your quest: build a KNIME workflow to loop through all these varied departmental files, transform their chaotic structures into a unified format, and consolidate them into one pristine master report. Become the unifying force in financial reporting!`,
-                objective: `To consolidate multiple departmental Excel financial reports into a single, unified report, handling varying report structures and dynamically extracting data.`,
-                nodes: [
-                    'File Handling & Iteration: <code>List Files</code>',
-                    '<code>Table Row to Variable Loop Start</code>',
-                    'Data Reading: <code>Excel Reader</code> (configured with flow variables)',
-                    'Data Transformation: <code>Pivoting</code>',
-                    '<code>Column Filter</code>',
-                    '<code>Column Renamer</code>',
-                    '<code>Constant Value Column</code>',
-                    'Data Aggregation: <code>Concatenate</code>',
-                    '<code>GroupBy</code>',
-                    'Output: <code>Excel Writer</code>'
-                ],
-                logic: [
-                    '<b>List Files:</b> Get a list of all departmental Excel files in the designated directory.',
-                    '<b>Table Row to Variable Loop Start:</b> Iterate through each file path, converting it into a flow variable.',
-                    '<b>Excel Reader:</b> Inside the loop, read the current Excel file using the flow variable for the file path.',
-                    '<b>Extract Month and Department:</b> Use <code>Rule Engine</code> or <code>String Manipulation</code> to extract the Department and Month from the file name and add them as new columns.',
-                    '<b>Pivoting:</b> If reports have accounts as columns and months as rows, use the <code>Pivoting</code> node to transform them into a standardized format (e.g., Department, Month, Account, Amount).',
-                    '<b>Column Filter:</b> Select only the necessary columns to ensure consistency across all reports.',
-                    '<b>Concatenate:</b> Collect the transformed data from each departmental report into a single table.',
-                    '<b>Loop End:</b> Finish the loop.',
-                    '<b>GroupBy:</b> After the loop, group the consolidated data by Department, Month, and Account to sum the Amounts.',
-                    '<b>Excel Writer:</b> Write the final consolidated report to an Excel file.'
-                ]
+                comingSoonDate: 'August 8'
             },
             {
                 id: 'ex6',
                 title: '6. FX Rate Application',
                 emoji: '🌍',
-                scenario: `At "GlobalReach Inc.," transactions pour in from around the world, each in its local currency. Before anyone can make sense of the financials, every amount must be converted to USD using dynamic, daily FX rates. Your challenge: build a KNIME workflow that acts as a global converter, intelligently fetching and applying the correct exchange rate for each currency, transforming chaos into clarity.`,
-                objective: `To convert transaction amounts to a base currency (USD) by dynamically applying foreign exchange rates based on the transaction currency.`,
-                nodes: [
-                    'Data Aggregation: <code>GroupBy</code>',
-                    'Loop Control: <code>Table Row to Variable Loop Start</code>',
-                    '<code>Loop End</code>',
-                    'Conditional Logic: <code>Rule Engine</code>',
-                    'Data Transformation: <code>Math Formula</code>',
-                    '<code>Column Expressions</code>',
-                    'Variable Manipulation: <code>Variable Expressions</code>',
-                    '<code>Table Creator</code> (to simulate FX lookup)'
-                ],
-                logic: [
-                    '<b>GroupBy:</b> Group the transaction data by Currency to process each currency type separately.',
-                    '<b>Table Row to Variable Loop Start:</b> Iterate through each unique currency, making the Currency code available as a flow variable.',
-                    '<b>Simulate FX Rate Lookup:</b> Use a <code>Table Creator</code> or <code>CSV Reader</code> to simulate an FX rate lookup table.',
-                    '<b>Rule Engine / Column Expressions (Get FX Rate):</b> Extract the relevant FX rate for the current Currency from the lookup table. Assign it to a flow variable.',
-                    '<b>Math Formula:</b> Apply the FX rate to convert the Amount to USD Amount using the formula: <code>USD Amount = Amount / FX Rate</code>. The FX Rate will be passed as a flow variable.',
-                    '<b>Loop End:</b> Concatenate the results of each currency\'s conversion into a single table.'
-                ]
+                comingSoonDate: 'August 15'
             },
             {
                 id: 'ex7',
                 title: '7. Sliding Forecast Window',
                 emoji: '📈',
-                scenario: `You're a financial analyst at "TrendSetters Co.," tasked with providing monthly rolling 12-month revenue forecasts. Manually calculating these for every single month is a drain on your time. Your solution: build a KNIME workflow that creates a "sliding window" of 12 months across your historical revenue data. It should automatically calculate key metrics for each window as it moves forward. Become the master of dynamic time-series analysis!`,
-                objective: `To perform a rolling 12-month revenue analysis by dynamically filtering data within a sliding window and calculating metrics for each window.`,
-                nodes: [
-                    'Date & Time Management: <code>Create Date&Time Range</code>',
-                    '<code>Interval Loop Start</code>',
-                    '<code>Date&Time-based Row Filter</code>',
-                    '<code>Date&Time Shift</code>',
-                    'Data Aggregation: <code>GroupBy</code>',
-                    'Calculation: <code>Math Formula</code>',
-                    'Loop Control: <code>Loop End</code>'
-                ],
-                logic: [
-                    '<b>Create Date&Time Range:</b> Generate a sequence of months covering the entire dataset\'s period, one for each starting point of a 12-month window.',
-                    '<b>Interval Loop Start:</b> Use the generated date range to initiate an <code>Interval Loop Start</code>. This node iterates through the date range, providing flow variables for the current window\'s start and end dates.',
-                    '<b>Date&Time-based Row Filter:</b> Inside the loop, filter the revenue data to include only records falling within the current 12-month window defined by the flow variables.',
-                    '<b>GroupBy:</b> Group the filtered data by Customer Segment or Product (or simply calculate overall revenue) and sum the Revenue for the current window.',
-                    '<b>Math Formula:</b> Calculate any additional metrics required for the window (e.g., average revenue per month).',
-                    '<b>Loop End:</b> Collect the calculated metrics for each 12-month window.'
-                ]
+                comingSoonDate: 'August 22'
             },
             {
                 id: 'ex8',
-                title: '8. Trade Sequence Blocking (HomeWork)',
+                title: '8. Trade Sequence Blocking',
                 emoji: '✅',
-                scenario: `At "Precision Trading," complete open-close trade cycles are paramount for accurate reporting and risk management. Their raw trade logs often contain orphaned "open" or "close" events, messing up their analytics. Your mission: build a KNIME workflow that rigorously audits these logs, identifying trade "block groups" and filtering out any incomplete cycles. Only perfectly matched open-close sequences should remain, ensuring data integrity.`,
-                objective: `To identify and filter complete trade open-close cycles within grouped trade events, ensuring data integrity for analysis.`,
-                nodes: [
-                    'Data Preparation: <code>Sorter</code>',
-                    '<code>Lag Column</code>',
-                    '<code>Constant Value Column</code>',
-                    'Loop Control: <code>Group Loop Start</code>',
-                    '<code>Loop End</code>',
-                    'Conditional Logic: <code>Rule Engine</code>',
-                    '<code>Java Snippet</code>',
-                    'Filtering: <code>Row Filter</code>',
-                    'Data Joining: <code>Joiner</code>'
-                ],
-                logic: [
-                    '<b>Sorter:</b> Sort the data by Trade Pair ID and then by Timestamp to ensure events for each trade pair are in chronological order.',
-                    '<b>Lag Column:</b> Create a <code>Lag Column</code> for Event Type and Timestamp to compare the current row with the previous row within the same Trade Pair ID group.',
-                    '<b>Group Loop Start:</b> Group the data by Trade Pair ID, initiating a loop for each unique trade pair.',
-                    '<b>Rule Engine (Identify Sequence Start/End):</b> Inside the loop, use <code>Rule Engine</code> to identify the start (first event is Open) and end (last event is Close) of a potential complete trade cycle.',
-                    '<b>Java Snippet (State Management/Flagging):</b> Use a <code>Java Snippet</code> to maintain a state for each trade pair, flagging if an Open event has occurred without a corresponding Close, or vice versa. If the counter is 0 at the end of the group, it\'s a complete cycle.',
-                    '<b>Row Filter:</b> After the state management, filter out any trade pairs that do not have a complete open-close cycle.',
-                    '<b>Loop End:</b> Collect the complete trade cycles from each group.',
-                    '<b>Joiner (Optional):</b> If needed, join the filtered complete cycles back to the original full dataset for further analysis.'
-                ]
+                comingSoonDate: 'August 29'
             },
         ];
 
@@ -333,30 +227,40 @@
             contentDiv.id = ex.id;
             contentDiv.className = `content-section prose-custom max-w-none ${index === 0 ? 'active' : ''}`;
             
-            const nodesList = ex.nodes.map(node => `<li>${node}</li>`).join('');
-            const logicList = ex.logic.map(step => `<li>${step}</li>`).join('');
-
-            contentDiv.innerHTML = `
-                <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
-                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">${ex.emoji} ${ex.title}</h2>
-                    <p class="text-gray-600 mb-6">${ex.scenario}</p>
-                    
-                    <div class="bg-[#F5F1EB] p-4 rounded-lg mb-6">
-                        <h3 class="!mt-0 !border-none text-[#A2886A]">🎯 Technical Objective</h3>
-                        <p class="text-gray-700">${ex.objective}</p>
+            if (ex.comingSoonDate) {
+                contentDiv.innerHTML = `
+                    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100 text-center">
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">${ex.emoji} ${ex.title}</h2>
+                        <p class="text-xl text-gray-600 mb-4"><strong>Coming Soon ${ex.comingSoonDate}!</strong></p>
+                        <p class="text-gray-500">Stay tuned for this exciting new exercise.</p>
                     </div>
+                `;
+            } else {
+                const nodesList = ex.nodes.map(node => `<li>${node}</li>`).join('');
+                const logicList = ex.logic.map(step => `<li>${step}</li>`).join('');
 
-                    <h3>🛠️ KNIME Nodes to Use</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-1">
-                        ${nodesList}
-                    </ul>
+                contentDiv.innerHTML = `
+                    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">${ex.emoji} ${ex.title}</h2>
+                        <p class="text-gray-600 mb-6">${ex.scenario}</p>
+                        
+                        <div class="bg-[#F5F1EB] p-4 rounded-lg mb-6">
+                            <h3 class="!mt-0 !border-none text-[#A2886A]">🎯 Technical Objective</h3>
+                            <p class="text-gray-700">${ex.objective}</p>
+                        </div>
 
-                    <h3>📝 Step-by-Step Logic</h3>
-                    <ol class="list-decimal list-inside text-gray-700 space-y-2">
-                        ${logicList}
-                    </ol>
-                </div>
-            `;
+                        <h3>🛠️ KNIME Nodes to Use</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            ${nodesList}
+                        </ul>
+
+                        <h3>📝 Step-by-Step Logic</h3>
+                        <ol class="list-decimal list-inside text-gray-700 space-y-2">
+                            ${logicList}
+                        </ol>
+                    </div>
+                `;
+            }
             contentContainer.appendChild(contentDiv);
         });
 
