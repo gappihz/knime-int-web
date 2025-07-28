@@ -187,24 +187,73 @@
                 id: 'ex3',
                 title: '3. Asset Depreciation Forecast',
                 emoji: '⏳',
-                scenario: `You're the asset manager for "Prime Logistics." Forecasting depreciation for each of their hundreds of assets, each with a different useful life, is a budgeting nightmare. You need a workflow that calculates monthly depreciation for every asset until its exact end-of-life, then stops. No more over-depreciating or under-depreciating!`,
-                objective: `To simulate and calculate asset depreciation over its useful life using a recursive loop, dynamically stopping the calculation when the asset's useful life is complete.`,
+                scenario: `You're the asset manager for "Prime Logistics." Forecasting depreciation for each of their hundreds of assets, each with a different useful life measured in various units, is a budgeting nightmare. You also need to standardize the <strong>salvage value at 10%</strong> of the initial cost for all assets. Your goal is to design a robust KNIME workflow that not only calculates the precise monthly depreciation but also generates a complete, month-by-month depreciation schedule for each asset, covering a <strong>fixed 3-year forecast period (July 2024 to July 2027)</strong>, regardless of its total useful life. This will provide a clear picture for budgeting and financial reporting.`,
+                objective: 'To create a detailed <strong>3-year (36 months) depreciation schedule</strong> (from July 2024 to July 2027), calculating <strong>salvage value at 10%</strong> of initial cost and converting asset <strong>lifespan to useful life in months</strong>. The workflow will dynamically generate a row for each asset for each month over this 3-year forecast period, showing the monthly depreciation.',
                 nodes: [
-                    '<b>Loop Control:</b> <code>Table Row to Variable Loop Start</code>, <code>Recursive Loop Start</code>, <code>Variable Condition Loop End</code>, <code>Loop End</code>',
-                    '<b>Date & Time Manipulation:</b> <code>Date&Time Difference</code>, <code>Date&Time Shift</code>',
-                    '<b>Calculation:</b> <code>Java Snippet</code> (or <code>Math Formula</code> for simpler methods), <code>Column Expressions</code>',
-                    '<b>Data Aggregation:</b> <code>Concatenate</code>',
-                    '<b>Variable Manipulation:</b> <code>Variable Expressions</code>'
+                    '<b>Data Input:</b> <code>CSV Reader</code>',
+                    '<b>Date & Time Manipulation:</b> <code>String to Date&Time</code>, <code>Create Date&Time Range</code>, <code>Date&Time Shift</code>',
+                    '<b>Calculation & Transformation:</b> <code>Math Formula</code>, <code>Column Expressions</code>',
+                    '<b>Loop Control:</b> <code>Group Loop Start</code>, <code>Loop End</code>',
+                    '<b>Data Manipulation:</b> <code>Joiner</code> (or <code>Cross Joiner</code>), <code>Pivot</code>, <code>Rule Engine</code>',
+                    '<b>Output:</b> <code>Excel Writer</code> (Optional, for output)'
                 ],
                 logic: [
-                    '<b>Table Row to Variable Loop Start:</b> Iterate through each asset, passing its details (Cost, Useful Life, Start Date, Depreciation Method) as flow variables to the recursive loop.',
-                    '<b>Recursive Loop Start:</b> Initialize the loop. The initial iteration will take the asset\'s starting data. Subsequent iterations will take the output of the previous iteration.',
-                    '<b>Date&Time Shift:</b> Inside the loop, increment the current month by one using <code>Date&Time Shift</code> to simulate time progression.',
-                    '<b>Date&Time Difference:</b> Calculate the difference in months between the asset\'s start date and the current month in the loop.',
-                    '<b>Java Snippet (or Math Formula):</b> Calculate the monthly depreciation based on the selected depreciation method (e.g., Straight-Line: Cost / Useful Life).',
-                    '<b>Variable Condition Loop End:</b> This is crucial. Use a <code>Variable Condition Loop End</code> node to check if the current month has exceeded the asset\'s "Useful Life (Months)". The loop terminates for that specific asset when the condition is met.',
-                    '<b>Concatenate:</b> Collect the monthly depreciation records for each asset from the recursive loop.',
-                    '<b>Loop End (Outer Loop):</b> Combine the results from all assets.'
+                    '<b>Load Data using <code>CSV Reader</code>:</b> Drag the <code>CSV Reader</code> node to your workflow. Configure it to read your asset data file. Ensure column headers are correctly parsed (e.g., "Asset Name", "Initial Cost", "Lifespan", "Life Unit", "Acquisition Date").',
+                    '<b>Convert "Acquisition Date" to Date&Time Format using <code>String to Date&Time</code>:</b> Connect this node after the <code>CSV Reader</code>. Select your "Acquisition Date" column, set the correct <b>Date Format</b> (e.g., "yyyy-MM-dd" or as it appears in your data), and set the <b>New Type</b> to <code>Date and Time</code>.',
+                    '<b>Calculate Salvage Value using <code>Math Formula</code>:</b> Connect this node after the <code>String to Date&Time</code> node. Create a new column, "Salvage Value", with the expression: <code>$"Initial Cost"$ * 0.10</code>.',
+                    '<b>Convert Lifespan to Useful Life in Months using <code>Column Expressions</code>:</b> Connect after the <code>Math Formula</code> node. Add a new column named "Useful Life in Months". Use the following expression:' +
+                    '<div class="code-block-rules">' +
+                    '<code>if (column("Life Unit") == "Years") {</code><br>' +
+                    '<code>    column("Lifespan") * 12</code><br>' +
+                    '<code>} else if (column("Life Unit") == "Months") {</code><br>' +
+                    '<code>    column("Lifespan") * 1</code><br>' +
+                    '<code>} else {</code><br>' +
+                    '<code>    column("Lifespan")</code><br>' +
+                    '<code>}</code>' +
+                    '</div>',
+                    '<b>Calculate Base Monthly Depreciation using <code>Math Formula</code>:</b> Connect after the <code>Column Expressions</code> node. Create a new column, "Base Monthly Depreciation", with the expression: <code>($"Initial Cost"$ - $"Salvage Value"$) / $"Useful Life in Months"$</code>.',
+                    '<b>Start Group Loop (<code>Group Loop Start</code>):</b> Connect this node after the last <code>Math Formula</code>. Configure it to group by "Asset Name" (or a unique "Asset ID" if available). <b>Crucially, ensure all necessary columns for the calculation within the loop (like "Acquisition Date", "Useful Life in Months", "Base Monthly Depreciation") are included in the grouped table or passed as flow variables.</b>',
+                    '<b>Generate Monthly Dates (<code>Create Date&Time Range</code>):</b> Inside the <code>Group Loop Start</code>, drag a <code>Create Date&Time Range</code> node.' +
+                    '<ul>' +
+                    '<li>Set <b>Mode Selection</b> to <code>Fixed Start and End Date</code>.</li>' +
+                    '<li>Set <b>Start date</b> to <code>2024-07-01</code> (July 1, 2024).</li>' +
+                    '<li>Set <b>End date</b> to <code>2027-07-01</code> (July 1, 2027).</li>' +
+                    '<li>Set <b>Interval</b> to <code>1M</code> (1 month).</li>' +
+                    '<li>This node will generate a table of dates (36 rows) for <i>each</i> iteration of the Group Loop.</li>' +
+                    '</ul>',
+                    '<b>Combine Asset Data with Monthly Dates (<code>Cross Joiner</code> or <code>Joiner</code>):</b> After the <code>Create Date&Time Range</code> node, you\'ll need to combine the current asset\'s details (from the <code>Group Loop Start</code>) with the newly generated monthly dates.' +
+                    '<ul>' +
+                    '<li>The simplest way to do this is with a <b><code>Cross Joiner</code></b>. Connect the main data flow from the <code>Group Loop Start</code> (containing one asset\'s details) to the top input, and the output of <code>Create Date&Time Range</code> (containing the 36 months) to the bottom input. This will duplicate the asset\'s details for each of the 36 months.</li>' +
+                    '</ul>',
+                    '<b>Calculate Current Month\'s Depreciation and Book Value (<code>Column Expressions</code> or <code>Rule Engine</code> / <code>Math Formula</code> combo):</b> Connect after the <code>Cross Joiner</code>. This is where you determine the actual depreciation for each specific month. You\'ll need:' +
+                    '<ul>' +
+                    '<li>The asset\'s "Acquisition Date".</li>' +
+                    '<li>The asset\'s "Useful Life in Months".</li>' +
+                    '<li>The asset\'s "Base Monthly Depreciation".</li>' +
+                    '<li>The "Current Month" from the <code>Create Date&Time Range</code> output.</li>' +
+                    '<li><b>Logic:</b>' +
+                    '<ul>' +
+                    '<li>Calculate the number of months passed since "Acquisition Date" up to the "Current Month" of the forecast. (You might need a <code>Date&Time Difference</code> node before this step, or perform the calculation within <code>Column Expressions</code>).</li>' +
+                    '<li>Use a <code>Column Expressions</code> or <code>Rule Engine</code> to check:' +
+                    '<ul>' +
+                    '<li>If <code>Current Month</code> is <i>before</i> <code>Acquisition Date</code>, then "Monthly Depreciation" is 0.</li>' +
+                    '<li>If the number of months passed is <i>greater than</i> "Useful Life in Months", then "Monthly Depreciation" is 0 (asset is fully depreciated).</li>' +
+                    '<li>Otherwise, "Monthly Depreciation" is the "Base Monthly Depreciation".</li>' +
+                    '</ul>' +
+                    '</li>' +
+                    '<li>You can also calculate "Accumulated Depreciation" and "Book Value" here or in subsequent steps using additional <code>Math Formula</code> nodes.</li>' +
+                    '</ul>' +
+                    '</li>' +
+                    '</ul>',
+                    '<b>Pivot Monthly Depreciation (<code>Pivot</code>):</b> Connect after the previous calculation node (Step 9).' +
+                    '<ul>' +
+                    '<li>For <b>Groups</b>, select all columns *except* the generated date column (from <code>Create Date&Time Range</code>) and the "Monthly Depreciation" column.</li>' +
+                    '<li>For <b>Pivots</b>, select the generated date column (from <code>Create Date&Time Range</code>).</li>' +
+                    '<li>For <b>Manual Aggregation</b>, select "Monthly Depreciation" and set the <b>Aggregation Method</b> to <code>First</code>.</li>' +
+                    '<li>In <b>Advanced Settings</b>, ensure "Column name remains" is set to <code>Pivot name (original column name)</code> or similar to keep both.</li>' +
+                    '</ul>',
+                    '<b>Collect Loop Results (<code>Loop End</code>):</b> Connect the output of the <code>Pivot</code> node to a <code>Loop End</code> node.',
+                    '<b>Output Final Schedule (<code>Excel Writer</code> - Optional):</b> Connect the output of the <code>Loop End</code> to an <code>Excel Writer</code> node to save your complete 3-year monthly depreciation schedule.'
                 ]
             },
             {
