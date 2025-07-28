@@ -203,13 +203,8 @@
                     '<b>Calculate Salvage Value using <code>Math Formula</code>:</b> Connect this node after the <code>String to Date&Time</code> node. Create a new column, "Salvage Value", with the expression: <code>$"Initial Cost"$ * 0.10</code>.',
                     '<b>Convert Lifespan to Useful Life in Months using <code>Column Expressions</code>:</b> Connect after the <code>Math Formula</code> node. Add a new column named "Useful Life in Months". Use the following expression:' +
                     '<div class="code-block-rules">' +
-                    '<code>if (column("Life Unit") == "Years") {</code><br>' +
-                    '<code>    column("Lifespan") * 12</code><br>' +
-                    '<code>} else if (column("Life Unit") == "Months") {</code><br>' +
-                    '<code>    column("Lifespan") * 1</code><br>' +
-                    '<code>} else {</code><br>' +
-                    '<code>    column("Lifespan")</code><br>' +
-                    '<code>}</code>' +
+                    '<code>if($["Life_Unit"] = "Years",</code><br>' + // Updated formula as per user
+                    '<code>    $["LifeSpan"]*12,$["LifeSpan"]*1)</code>' + // Updated formula as per user
                     '</div>',
                     '<b>Calculate Base Monthly Depreciation using <code>Math Formula</code>:</b> Connect after the <code>Column Expressions</code> node. Create a new column, "Base Monthly Depreciation", with the expression: <code>($"Initial Cost"$ - $"Salvage Value"$) / $"Useful Life in Months"$</code>.',
                     '<b>Start Group Loop (<code>Group Loop Start</code>):</b> Connect this node after the last <code>Math Formula</code>. Configure it to group by "Asset Name" (or a unique "Asset ID" if available). <b>Crucially, ensure all necessary columns for the calculation within the loop (like "Acquisition Date", "Useful Life in Months", "Base Monthly Depreciation") are included in the grouped table or passed as flow variables.</b>',
